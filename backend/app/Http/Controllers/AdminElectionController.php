@@ -19,7 +19,7 @@ class AdminElectionController extends Controller
 
         if (!$settings) {
             $settings = ElectionSetting::create([
-                'election_name' => 'Pemilihan Umum Raya BEM',
+                'election_name' => 'Pemilihan Suara Umum BEM',
                 'start_time' => now(),
                 'end_time' => now()->addDays(2),
                 'smart_contract_address' => '0x0000000000000000000000000000000000000000',

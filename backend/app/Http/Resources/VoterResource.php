@@ -18,6 +18,7 @@ class VoterResource extends JsonResource
             'id' => $this->id,
             'nim' => $this->nim,
             'name' => $this->name,
+            'email' => $this->email,
             'faculty' => $this->faculty,
             'commitment_hash' => $this->commitment_hash,
             'has_voted' => (bool) $this->has_voted,

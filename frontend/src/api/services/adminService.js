@@ -75,5 +75,19 @@ export const adminService = {
       console.error('Error toggling election status:', error);
       throw error;
     }
+  },
+
+  /**
+   * Register a new voter via admin control panel.
+   * @param {Object} voterData Contains nim, name, email, faculty
+   */
+  async addVoter(voterData) {
+    try {
+      const response = await axiosClient.post('/voters', voterData);
+      return response.data || response;
+    } catch (error) {
+      console.error('Error adding voter:', error);
+      throw error;
+    }
   }
 };

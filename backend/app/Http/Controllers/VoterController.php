@@ -29,32 +29,42 @@ class VoterController extends Controller
     public function store(StoreVoterRequest $request): JsonResponse
     {
         $validated = $request->validated();
-        $secret = null;
+
+        // 1. Auto-generate a strong password (min 8 chars, 1 uppercase, 1 number, 1 symbol)
+        $lettersUpper = \Illuminate\Support\Str::upper(\Illuminate\Support\Str::random(2));
+        $lettersLower = \Illuminate\Support\Str::lower(\Illuminate\Support\Str::random(4));
+        $numbers = rand(10, 99);
+        $symbols = collect(['!', '@', '#', '$', '%', '*', '?'])->random(2)->implode('');
+        $rawPassword = str_shuffle($lettersUpper . $lettersLower . $numbers . $symbols);
 
         DB::beginTransaction();
         try {
-            if (empty($validated['commitment_hash'])) {
-                // Generate secret: 32-character hexadecimal string
-                $secret = bin2hex(random_bytes(16));
-                $validated['commitment_hash'] = hash('sha256', $validated['nim'] . $secret);
-            }
+            // 2. Generate ZKP commitment_hash
+            $validated['commitment_hash'] = hash('sha256', $validated['nim'] . $rawPassword);
 
-            $validated['password'] = Hash::make($validated['password']);
+            // 3. Hash the password for login
+            $validated['password'] = Hash::make($rawPassword);
+
+            // 4. Save to voters table
             $voter = Voter::create($validated);
 
-            // Add commitment hash as a new leaf in the Merkle Tree
+            // 5. Add commitment hash as a new leaf in the Merkle Tree (merkle_leaves table)
             $leafIndex = MerkleLeaf::count();
             MerkleLeaf::create([
                 'leaf_index' => $leafIndex,
                 'leaf_hash' => $validated['commitment_hash'],
             ]);
 
+            // 6. Send the credential email
+            \Illuminate\Support\Facades\Mail::to($voter->email)->send(
+                new \App\Mail\VoterCredentialMail($voter->name, $voter->nim, $rawPassword)
+            );
+
             DB::commit();
 
             return response()->json([
-                'message' => 'Voter registered successfully',
+                'message' => 'Voter registered successfully and credentials emailed',
                 'data' => new VoterResource($voter),
-                'secret' => $secret, // Only returned on registration so the voter can save it
             ], 201);
         } catch (\Exception $e) {
             DB::rollBack();

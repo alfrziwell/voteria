@@ -26,6 +26,7 @@ class Voter extends Authenticatable
     protected $fillable = [
         'nim',
         'name',
+        'email',
         'faculty',
         'password',
         'commitment_hash',

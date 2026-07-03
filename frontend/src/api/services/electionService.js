@@ -20,20 +20,24 @@ export const electionService = {
   },
 
   /**
-   * Submit/relay vote transaction status update.
-   * Updates the voter's has_voted status after a successful blockchain transaction.
-   * In a relayer model, voteData may also include proof params (a, b, c) and inputs.
+   * Submit/relay vote transaction to the backend relayer.
+   * The backend will sign and submit the transaction to the blockchain.
    * @param {Object} voteData
-   * @param {string} [voteData.commitment_hash] Voter's Merkle commitment leaf hash
-   * @param {Array} [voteData.proof] (Optional) ZK-SNARK Groth16 proof parameter array
-   * @param {Array} [voteData.inputs] (Optional) ZK-SNARK public signals array
+   * @param {Object} voteData.proof ZK-SNARK Groth16 proof object containing a, b, c, inputs
+   * @param {number} voteData.candidateId The ID of the candidate being voted for
+   * @param {string} voteData.nullifierHash The generated nullifier hash to prevent double voting
    */
   async submitVote(voteData) {
     try {
-      const response = await axiosClient.post('/voter/voted', voteData);
-      return response;
+      // Sends a JSON object containing { proof, candidateId, nullifierHash } to the Laravel API Relayer endpoint
+      const response = await axiosClient.post('/election/submit-vote', {
+        proof: voteData.proof,
+        candidateId: voteData.candidateId,
+        nullifierHash: voteData.nullifierHash
+      });
+      return response.data;
     } catch (error) {
-      console.error('Error submitting vote status callback:', error);
+      console.error('Error submitting vote to relayer:', error);
       throw error;
     }
   }

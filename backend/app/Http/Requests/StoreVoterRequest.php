@@ -25,7 +25,8 @@ class StoreVoterRequest extends FormRequest
             'nim' => ['required', 'string', 'unique:voters,nim'],
             'name' => ['required', 'string', 'max:255'],
             'faculty' => ['required', 'string', 'max:255'],
-            'password' => ['required', 'string', 'min:6'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:voters,email'],
+            'password' => ['nullable', 'string'],
             'commitment_hash' => ['nullable', 'string'],
         ];
     }

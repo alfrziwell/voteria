@@ -38,6 +38,12 @@ class AdminSeeder extends Seeder
                 'password' => Hash::make('kpum123'),
                 'role' => 'kpum',
             ],
+            [
+                'name' => 'Administrator Utama',
+                'username' => 'admin',
+                'password' => Hash::make('admin123'),
+                'role' => 'admin',
+            ],
         ];
 
         foreach ($admins as $adminData) {

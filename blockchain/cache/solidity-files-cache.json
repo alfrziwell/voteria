@@ -1,9 +1,9 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-    "C:\\Users\\Ghaida\\Documents\\Alif Alfarizi\\PBP\\tugas-besar\\blockchain\\contracts\\Evoting.sol": {
-      "lastModificationDate": 1783074323346,
-      "contentHash": "1d5b771aba8f8975282b8b4365bee398",
+    "C:\\Users\\muham\\OneDrive\\Documents\\KULIAH\\PBP\\voteria\\blockchain\\contracts\\Evoting.sol": {
+      "lastModificationDate": 1783076220175,
+      "contentHash": "c8377a0159331a9886a0c81cf7878652",
       "sourceName": "contracts/Evoting.sol",
       "solcConfig": {
         "version": "0.8.24",
@@ -39,9 +39,9 @@
         "Evoting"
       ]
     },
-    "C:\\Users\\Ghaida\\Documents\\Alif Alfarizi\\PBP\\tugas-besar\\blockchain\\contracts\\Verifier.sol": {
-      "lastModificationDate": 1783074316189,
-      "contentHash": "4b9d8310179f91829cb030fbf043b89e",
+    "C:\\Users\\muham\\OneDrive\\Documents\\KULIAH\\PBP\\voteria\\blockchain\\contracts\\Verifier.sol": {
+      "lastModificationDate": 1783076220175,
+      "contentHash": "69bb0693815ac09d9c809276ac4b3cd4",
       "sourceName": "contracts/Verifier.sol",
       "solcConfig": {
         "version": "0.8.24",
