@@ -1,0 +1,14 @@
+{
+  "name": "voteria-blockchain",
+  "version": "1.0.0",
+  "description": "Smart contracts and ZKP circuits setup for Voteria E-Voting",
+  "main": "index.js",
+  "scripts": {
+    "compile": "npx hardhat compile",
+    "test": "npx hardhat test"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "hardhat": "^2.22.2"
+  }
+}

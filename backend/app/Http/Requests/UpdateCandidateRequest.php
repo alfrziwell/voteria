@@ -1,0 +1,35 @@
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class UpdateCandidateRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
+    {
+        $candidateId = $this->route('candidate');
+
+        return [
+            'candidate_number' => ['sometimes', 'integer', 'unique:candidates,candidate_number,' . $candidateId],
+            'chairman_name' => ['sometimes', 'string', 'max:255'],
+            'vice_chairman_name' => ['sometimes', 'string', 'max:255'],
+            'vision' => ['sometimes', 'string'],
+            'mission' => ['sometimes', 'string'],
+            'photo_url' => ['sometimes', 'url'],
+        ];
+    }
+}
