@@ -13,11 +13,15 @@ const axiosClient = axios.create({
 axiosClient.interceptors.request.use(
   (config) => {
     // Check local storage for voter token or admin token
-    // Using a common 'auth_token' or separate depending on session setup
     const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
     
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    // If sending FormData, remove Content-Type so browser sets it with proper boundary
+    if (config.data instanceof FormData) {
+      delete config.headers['Content-Type'];
     }
     
     return config;

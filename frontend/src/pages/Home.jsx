@@ -104,7 +104,7 @@ export default function Home() {
             <div className="w-12 h-1 bg-indigo-600 mx-auto rounded-full mt-3"></div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {/* Blockchain */}
             <div className="bg-[#F8FAFC] p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-indigo-500/5 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
               <div>
@@ -167,7 +167,7 @@ export default function Home() {
             <div className="w-12 h-1 bg-indigo-600 mx-auto rounded-full mt-3"></div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm relative overflow-hidden transition-all hover:shadow-md duration-300">
               <span className="absolute -top-6 -right-2 text-8xl font-black font-mono text-slate-50 select-none">
                 01

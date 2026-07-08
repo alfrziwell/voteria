@@ -5,6 +5,14 @@ export default function CandidateCard({ candidate, onVoteClick, disabled, showRe
   const voteCount = candidate.votes || 0;
   const percentage = totalVotes > 0 ? ((voteCount / totalVotes) * 100).toFixed(1) : '0.0';
 
+  // Resolve local /storage/ paths to full backend URL
+  const BACKEND_URL = 'http://localhost:8000';
+  const getPhotoUrl = (url) => {
+    if (!url) return null;
+    if (url.startsWith('/storage/')) return `${BACKEND_URL}${url}`;
+    return url;
+  };
+
   return (
     <div className="bg-white border border-slate-100 rounded-3xl p-6 flex flex-col justify-between shadow-sm hover:shadow-xl hover:shadow-indigo-500/5 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
       <div>
@@ -19,9 +27,13 @@ export default function CandidateCard({ candidate, onVoteClick, disabled, showRe
 
         {candidate.photo_url ? (
           <img
-            src={candidate.photo_url}
+            src={getPhotoUrl(candidate.photo_url)}
             alt={`${candidate.chairman_name} & ${candidate.vice_chairman_name}`}
             className="w-full h-52 object-cover mb-6 rounded-2xl shadow-inner border border-slate-100"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400"><rect width="100%" height="100%" fill="%23f1f5f9"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="16" fill="%2394a3b8">No Photo</text></svg>';
+            }}
           />
         ) : (
           <div className="w-full h-52 bg-slate-50 flex items-center justify-center text-slate-450 mb-6 border border-dashed border-slate-200 rounded-2xl">

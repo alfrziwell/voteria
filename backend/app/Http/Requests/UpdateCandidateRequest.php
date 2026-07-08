@@ -29,7 +29,7 @@ class UpdateCandidateRequest extends FormRequest
             'vice_chairman_name' => ['sometimes', 'string', 'max:255'],
             'vision' => ['sometimes', 'string'],
             'mission' => ['sometimes', 'string'],
-            'photo_url' => ['sometimes', 'url'],
+            'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:5120'],
         ];
     }
 }

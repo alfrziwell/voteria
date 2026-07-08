@@ -27,7 +27,7 @@ class StoreCandidateRequest extends FormRequest
             'vice_chairman_name' => ['required', 'string', 'max:255'],
             'vision' => ['required', 'string'],
             'mission' => ['required', 'string'],
-            'photo_url' => ['required', 'url'],
+            'photo' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:5120'],
         ];
     }
 }

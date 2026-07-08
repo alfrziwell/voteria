@@ -15,11 +15,12 @@ export default function Navbar() {
   const handleLogout = async () => {
     try {
       await authService.logout();
+    } catch (err) {
+      console.error('Logout failed:', err);
+    } finally {
       setIsOpen(false);
       setShowConfirm(false);
       navigate('/');
-    } catch (err) {
-      console.error('Logout failed:', err);
     }
   };
 
@@ -37,7 +38,7 @@ export default function Navbar() {
           </Link>
           
           {/* Desktop Links (hidden on mobile, visible on md and up) */}
-          <div className="hidden md:flex items-center gap-8 text-xs font-semibold uppercase tracking-wider">
+          <div className="hidden lg:flex items-center gap-8 text-xs font-semibold uppercase tracking-wider">
             <Link 
               to="/" 
               className={`transition-colors flex items-center gap-2 py-1.5 px-1 border-b-2 ${
@@ -97,7 +98,7 @@ export default function Navbar() {
           </div>
 
           {/* Mobile Menu Button (visible on mobile, hidden on md and up) */}
-          <div className="md:hidden flex items-center">
+          <div className="lg:hidden flex items-center">
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="text-white hover:text-indigo-400 focus:outline-none transition-colors p-2 cursor-pointer"
@@ -111,7 +112,7 @@ export default function Navbar() {
 
         {/* Mobile Links Drawer (visible on mobile when open, hidden on md and up) */}
         <div 
-          className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
+          className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out ${
             isOpen ? 'max-h-[450px] opacity-100 mt-4' : 'max-h-0 opacity-0 pointer-events-none'
           }`}
         >

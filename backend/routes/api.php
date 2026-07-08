@@ -42,6 +42,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Candidates CRUD
     Route::post('/candidates', [CandidateController::class, 'store']);
     Route::put('/candidates/{candidate}', [CandidateController::class, 'update']);
+    Route::post('/candidates/{candidate}', [CandidateController::class, 'update']); // For multipart file uploads
     Route::delete('/candidates/{candidate}', [CandidateController::class, 'destroy']);
 
     // Voters CRUD & Bulk Import

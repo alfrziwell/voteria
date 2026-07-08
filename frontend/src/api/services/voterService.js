@@ -16,5 +16,31 @@ export const voterService = {
       console.error('Error fetching voter profile:', error);
       throw error;
     }
+  },
+
+  /**
+   * Fetch all registered voters (Admin only).
+   */
+  async getVoters() {
+    try {
+      const response = await axiosClient.get('/voters');
+      return response.data || response;
+    } catch (error) {
+      console.error('Error fetching voters:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Register a new voter (Admin only).
+   */
+  async addVoter(voterData) {
+    try {
+      const response = await axiosClient.post('/voters', voterData);
+      return response.data || response;
+    } catch (error) {
+      console.error('Error adding voter:', error);
+      throw error;
+    }
   }
 };
