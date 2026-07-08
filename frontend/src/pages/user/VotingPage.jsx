@@ -196,7 +196,7 @@ export default function VotingPage() {
               </div>
               <div>
                 <span className="text-xs font-extrabold text-slate-400 uppercase tracking-widest block">Kandidat Pilihan</span>
-                <h3 className="text-base font-bold text-[#080627] uppercase tracking-wide font-poppins mt-0.5">{candidate?.name}</h3>
+                <h3 className="text-base font-bold text-[#080627] uppercase tracking-wide font-poppins mt-0.5">{candidate?.chairman_name} & {candidate?.vice_chairman_name}</h3>
               </div>
             </div>
 

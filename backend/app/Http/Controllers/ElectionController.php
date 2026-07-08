@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UpdateElectionSettingRequest;
 use App\Http\Resources\ElectionSettingResource;
 use App\Models\ElectionSetting;
+use App\Services\BlockchainService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class ElectionController extends Controller
 {
@@ -19,7 +21,7 @@ class ElectionController extends Controller
         // Seed default settings if database is empty
         if (!$settings) {
             $settings = ElectionSetting::create([
-                'election_name' => 'Pemilihan Umum Raya BEM',
+                'election_name' => 'Pemilihan Suara Umum BEM',
                 'start_time' => now(),
                 'end_time' => now()->addDays(2),
                 'smart_contract_address' => '0x0000000000000000000000000000000000000000',
@@ -41,7 +43,7 @@ class ElectionController extends Controller
 
         if (!$settings) {
             $settings = ElectionSetting::create(array_merge([
-                'election_name' => 'Pemilihan Umum Raya BEM',
+                'election_name' => 'Pemilihan Suara Umum BEM',
                 'start_time' => now(),
                 'end_time' => now()->addDays(2),
                 'smart_contract_address' => '0x0000000000000000000000000000000000000000',
@@ -55,5 +57,40 @@ class ElectionController extends Controller
             'message' => 'Election settings updated successfully',
             'data' => new ElectionSettingResource($settings),
         ]);
+    }
+
+    /**
+     * Submit a vote via the backend relayer.
+     * Receives ZKP proof from the frontend and broadcasts the transaction to the blockchain.
+     */
+    public function submitVote(Request $request): JsonResponse
+    {
+        $request->validate([
+            'proof' => 'required|array',
+            'proof.a' => 'required|array',
+            'proof.b' => 'required|array',
+            'proof.c' => 'required|array',
+            'candidateId' => 'required|integer',
+            'nullifierHash' => 'required|string',
+        ]);
+
+        try {
+            $blockchainService = new BlockchainService();
+
+            $txHash = $blockchainService->castVote(
+                $request->input('proof'),
+                $request->input('candidateId'),
+                $request->input('nullifierHash')
+            );
+
+            return response()->json([
+                'message' => 'Vote submitted successfully',
+                'transaction_hash' => $txHash,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to submit vote: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 }

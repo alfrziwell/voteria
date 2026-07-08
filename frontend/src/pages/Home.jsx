@@ -5,8 +5,6 @@ import Footer from '../components/user/Footer';
 import logo from '../assets/logo.png';
 import teamAlif from '../assets/team_alif.png';
 import teamNazril from '../assets/team_nazril.png';
-import teamSaepudin from '../assets/team_saepudin.png';
-import teamFajli from '../assets/team_fajli.png';
 import {
   FaLock, FaNetworkWired, FaServer, FaUser, FaThList,
   FaFingerprint, FaArrowRight, FaChevronDown,
@@ -17,7 +15,6 @@ export default function Home() {
   const team = [
     { name: 'Alif Alfarizi', nim: '105240003', role: 'Backend Developer', photo: teamAlif },
     { name: 'Nazril Azzam Saepudin', nim: '105240027', role: 'Frontend Developer', photo: teamNazril },
-    { name: 'Fajli Handika', nim: '105240007', role: 'Smart Contract Developer', photo: teamFajli },
   ];
 
   // Interactive Accordion State
@@ -272,7 +269,7 @@ export default function Home() {
             <div className="w-12 h-1 bg-indigo-600 mx-auto rounded-full mt-3"></div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8">
             {team.map((member, i) => (
               <div
                 key={i}

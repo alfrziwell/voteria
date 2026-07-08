@@ -35,6 +35,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // Voting Status Callback
     Route::post('/voter/voted', [VoterController::class, 'updateVotedStatus']);
 
+    // Vote Submission via Relayer
+    Route::post('/election/submit-vote', [ElectionController::class, 'submitVote']);
+
     // CRUD and Admin Management Endpoints
     // Candidates CRUD
     Route::post('/candidates', [CandidateController::class, 'store']);

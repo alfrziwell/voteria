@@ -14,10 +14,10 @@ export default function CandidateCard({ candidate, onVoteClick, disabled }) {
           </span>
         </div>
 
-        {candidate.photo ? (
+        {candidate.photo_url ? (
           <img
-            src={candidate.photo}
-            alt={candidate.name}
+            src={candidate.photo_url}
+            alt={`${candidate.chairman_name} & ${candidate.vice_chairman_name}`}
             className="w-full h-52 object-cover mb-6 rounded-2xl shadow-inner border border-slate-100"
           />
         ) : (
@@ -27,7 +27,7 @@ export default function CandidateCard({ candidate, onVoteClick, disabled }) {
         )}
 
         <h3 className="text-lg font-bold text-[#080627] font-poppins mb-5 uppercase tracking-wide border-b border-slate-100 pb-2 flex items-center gap-2.5">
-          <FaUser className="text-sm text-indigo-600" /> {candidate.name}
+          <FaUser className="text-sm text-indigo-600" /> {candidate.chairman_name} & {candidate.vice_chairman_name}
         </h3>
         
         <div className="mb-4">

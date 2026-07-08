@@ -15,7 +15,7 @@ export default function UserDashboard() {
   const [voterProfile, setVoterProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  
+
   // Interactive search state
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -54,8 +54,9 @@ export default function UserDashboard() {
 
     // Filter by name or candidate number
     if (searchQuery.trim() !== '') {
-      result = result.filter(c => 
-        c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      result = result.filter(c =>
+        (c.chairman_name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (c.vice_chairman_name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
         String(c.candidate_number || c.id).includes(searchQuery)
       );
     }
@@ -79,7 +80,7 @@ export default function UserDashboard() {
         <div className="border-b border-slate-200 pb-6 mb-8 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
           <div>
             <h1 className="text-2xl md:text-3xl font-bold font-poppins text-slate-900 uppercase tracking-wide flex items-center gap-2">
-              <FaPoll className="text-indigo-600 text-2xl" /> {election?.election_name || 'Pemilihan Umum BEM'}
+              <FaPoll className="text-indigo-600 text-2xl" />Pemilihan Suara Umum BEM
             </h1>
             <p className="text-slate-400 text-xs font-bold uppercase tracking-wider mt-2 flex items-center gap-1.5">
               <FaCalendarAlt /> Masa Aktif: {election?.start_time ? new Date(election.start_time).toLocaleDateString('id-ID') : '-'} s/d {election?.end_time ? new Date(election.end_time).toLocaleDateString('id-ID') : '-'}
@@ -106,7 +107,7 @@ export default function UserDashboard() {
                 <span className="bg-emerald-50 border border-emerald-100 text-emerald-600 px-2.5 py-0.5 rounded-full font-extrabold text-[10px]">Belum Memilih</span>
               )}
             </div>
-            
+
             <button
               onClick={loadData}
               title="Refresh Data"
