@@ -35,7 +35,7 @@ export const electionService = {
         candidateId: voteData.candidateId,
         nullifierHash: voteData.nullifierHash
       });
-      return response.data;
+      return response;
     } catch (error) {
       console.error('Error submitting vote to relayer:', error);
       throw error;

@@ -180,14 +180,20 @@ export default function UserDashboard() {
             ) : (
               /* Candidates Grid */
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {filteredCandidates.map((candidate) => (
-                  <CandidateCard
-                    key={candidate.id}
-                    candidate={candidate}
-                    onVoteClick={handleVoteClick}
-                    disabled={hasVoted || isElectionClosed}
-                  />
-                ))}
+                {(() => {
+                  const totalVotes = candidates.reduce((sum, c) => sum + (c.votes || 0), 0);
+                  const showResults = hasVoted || isElectionClosed;
+                  return filteredCandidates.map((candidate) => (
+                    <CandidateCard
+                      key={candidate.id}
+                      candidate={candidate}
+                      onVoteClick={handleVoteClick}
+                      disabled={hasVoted || isElectionClosed}
+                      showResults={showResults}
+                      totalVotes={totalVotes}
+                    />
+                  ));
+                })()}
               </div>
             )}
           </>

@@ -14,6 +14,9 @@ class CandidateResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $blockchainService = new \App\Services\BlockchainService();
+        $votes = $blockchainService->getCandidateVotes($this->id);
+
         return [
             'id' => $this->id,
             'candidate_number' => (int) $this->candidate_number,
@@ -22,6 +25,7 @@ class CandidateResource extends JsonResource
             'vision' => $this->vision,
             'mission' => $this->mission,
             'photo_url' => $this->photo_url,
+            'votes' => $votes,
             'created_at' => $this->created_at?->toIso8601String(),
             'updated_at' => $this->updated_at?->toIso8601String(),
         ];

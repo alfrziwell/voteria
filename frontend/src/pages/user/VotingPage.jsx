@@ -110,6 +110,7 @@ export default function VotingPage() {
 
       setTxHash(response.transaction_hash || '0x' + 'f'.repeat(64));
       setSuccess(true);
+      setLoading(false);
     } catch (err) {
       console.error('Voting failed:', err);
       setError(

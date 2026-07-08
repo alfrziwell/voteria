@@ -1,7 +1,10 @@
 import React from 'react';
 import { FaUser, FaBullhorn, FaFlag, FaCheckCircle } from 'react-icons/fa';
 
-export default function CandidateCard({ candidate, onVoteClick, disabled }) {
+export default function CandidateCard({ candidate, onVoteClick, disabled, showResults, totalVotes }) {
+  const voteCount = candidate.votes || 0;
+  const percentage = totalVotes > 0 ? ((voteCount / totalVotes) * 100).toFixed(1) : '0.0';
+
   return (
     <div className="bg-white border border-slate-100 rounded-3xl p-6 flex flex-col justify-between shadow-sm hover:shadow-xl hover:shadow-indigo-500/5 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
       <div>
@@ -50,6 +53,21 @@ export default function CandidateCard({ candidate, onVoteClick, disabled }) {
           </div>
         )}
       </div>
+
+      {showResults && (
+        <div className="mb-6 bg-slate-50 border border-slate-100 rounded-2xl p-4 space-y-2.5">
+          <div className="flex justify-between items-center text-xs font-bold text-slate-500 uppercase tracking-wider">
+            <span>Perolehan Suara</span>
+            <span className="text-indigo-600 font-black">{percentage}% ({voteCount} Suara)</span>
+          </div>
+          <div className="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
+            <div 
+              className="bg-indigo-600 h-full rounded-full transition-all duration-1000 ease-out"
+              style={{ width: `${percentage}%` }}
+            ></div>
+          </div>
+        </div>
+      )}
 
       <button
         onClick={() => onVoteClick(candidate)}

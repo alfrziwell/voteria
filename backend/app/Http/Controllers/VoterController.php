@@ -60,6 +60,10 @@ class VoterController extends Controller
                 new \App\Mail\VoterCredentialMail($voter->name, $voter->nim, $rawPassword)
             );
 
+            // Sync new Merkle Root to the smart contract
+            $blockchainService = new \App\Services\BlockchainService();
+            $blockchainService->syncMerkleRoot();
+
             DB::commit();
 
             return response()->json([
@@ -115,6 +119,11 @@ class VoterController extends Controller
             }
 
             $voter->update($validated);
+
+            // Sync new Merkle Root to the smart contract
+            $blockchainService = new \App\Services\BlockchainService();
+            $blockchainService->syncMerkleRoot();
+
             DB::commit();
 
             return response()->json([
@@ -147,6 +156,10 @@ class VoterController extends Controller
             foreach ($leaves as $index => $leaf) {
                 $leaf->update(['leaf_index' => $index]);
             }
+
+            // Sync new Merkle Root to the smart contract
+            $blockchainService = new \App\Services\BlockchainService();
+            $blockchainService->syncMerkleRoot();
 
             DB::commit();
 
@@ -202,6 +215,10 @@ class VoterController extends Controller
                     'secret' => $secret,
                 ];
             }
+
+            // Sync new Merkle Root to the smart contract
+            $blockchainService = new \App\Services\BlockchainService();
+            $blockchainService->syncMerkleRoot();
 
             DB::commit();
 

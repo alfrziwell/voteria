@@ -83,6 +83,12 @@ class ElectionController extends Controller
                 $request->input('nullifierHash')
             );
 
+            // Mark the authenticated voter as having voted in the database
+            $voter = $request->user();
+            if ($voter) {
+                $voter->update(['has_voted' => true]);
+            }
+
             return response()->json([
                 'message' => 'Vote submitted successfully',
                 'transaction_hash' => $txHash,
