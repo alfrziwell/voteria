@@ -1,0 +1,15 @@
+test:
+  name: Voteria Stress Test
+  description: Pengujian throughput voting menggunakan ZKP & PBFT
+  workers:
+    number: 1
+  rounds:
+    - label: castVote
+      description: Mengirim transaksi voting secara massal
+      txNumber: 200
+      rateControl:
+        type: fixed-rate
+        opts:
+          tps: 20
+      workload:
+        module: workload/voteWorkload.js

@@ -97,7 +97,48 @@ export default function AdminDashboard() {
   // Admin Data
   const adminData = localStorage.getItem('admin_data');
   const loggedInAdmin = adminData ? JSON.parse(adminData) : null;
-  const isAdminRole = loggedInAdmin?.role === 'admin';
+  const adminRole = loggedInAdmin?.role;
+  const isAdminRole = adminRole === 'admin';
+  const isKpumRole = adminRole === 'kpum';
+  const isValidatorRole = ['rektor', 'dekan_1', 'dekan_2', 'kpum'].includes(adminRole);
+
+  const roleToNodeKey = {
+    rektor: 'voteria_node_rektor_active',
+    dekan_1: 'voteria_node_dekan_1_active',
+    dekan_2: 'voteria_node_dekan_2_active',
+    kpum: 'voteria_node_kpum_active'
+  };
+
+  const nodeNameMap = {
+    rektor: 'Node Rektor Universitas',
+    dekan_1: 'Node Dekan Fakultas 1',
+    dekan_2: 'Node Dekan Fakultas 2',
+    kpum: 'Node Ketua KPUM'
+  };
+
+  const nodeKey = roleToNodeKey[adminRole];
+  const [nodeActive, setNodeActive] = useState(() => {
+    if (!nodeKey) return false;
+    const val = localStorage.getItem(nodeKey);
+    return val !== 'false';
+  });
+
+  const [nodeLogs, setNodeLogs] = useState([]);
+  const [allNodesState, setAllNodesState] = useState({
+    rektor: localStorage.getItem('voteria_node_rektor_active') !== 'false',
+    dekan_1: localStorage.getItem('voteria_node_dekan_1_active') !== 'false',
+    dekan_2: localStorage.getItem('voteria_node_dekan_2_active') !== 'false',
+    kpum: localStorage.getItem('voteria_node_kpum_active') !== 'false'
+  });
+
+  const handleToggleNode = () => {
+    const nextState = !nodeActive;
+    setNodeActive(nextState);
+    if (nodeKey) {
+      localStorage.setItem(nodeKey, String(nextState));
+    }
+  };
+
 
   // Fetch Dashboard statistics
   const fetchStats = async () => {
@@ -329,6 +370,68 @@ export default function AdminDashboard() {
     fetchVoters();
     fetchCandidates();
   }, []);
+
+  // Simulating node log generation for validator roles
+  useEffect(() => {
+    if (!isValidatorRole) return;
+    
+    if (!nodeActive) {
+      setNodeLogs([
+        `[${new Date().toLocaleTimeString()}] Node ${nodeNameMap[adminRole] || 'Validator'} is OFFLINE.`,
+        `[${new Date().toLocaleTimeString()}] Klik 'Nyalakan Server Node' untuk mengaktifkan validasi konsensus PBFT.`
+      ]);
+      return;
+    }
+
+    const initialLogs = [
+      `[${new Date().toLocaleTimeString()}] Menginisialisasi Validator Node...`,
+      `[${new Date().toLocaleTimeString()}] Private key diturunkan dari akun role: ${adminRole}`,
+      `[${new Date().toLocaleTimeString()}] Menghubungkan ke Jaringan PBFT Permissioned (ChainID: 9988)...`,
+      `[${new Date().toLocaleTimeString()}] Handshake berhasil. Terhubung dengan peer lainnya.`,
+      `[${new Date().toLocaleTimeString()}] Status Node: ONLINE / AKTIF (Sinkron pada block height #142)`,
+      `[${new Date().toLocaleTimeString()}] Mendengarkan transaksi masuk...`
+    ];
+    setNodeLogs(initialLogs);
+
+    const simulationLogs = [
+      "Mendengarkan transaksi dari pemilih...",
+      "Transaksi masuk terdeteksi: castVote() dengan bukti ZK-SNARK.",
+      "Memulai verifikasi ZK-SNARK Proof via kontrak Verifier.sol...",
+      "✓ Bukti ZK-SNARK keanggotaan terverifikasi sukses (Proof Valid).",
+      "Memeriksa status Nullifier Hash pada ledger untuk mencegah double-voting...",
+      "PBFT Konsensus: Menyiarkan pesan PRE-PREPARE block proposal...",
+      "PBFT Konsensus: Menerima 3 pesan PREPARE dari peer validator.",
+      "PBFT Konsensus: Menerima 3 pesan COMMIT dari peer validator (Kuorum tercapai).",
+      "Blok berhasil ditulis ke ledger! Menambahkan 1 suara ke kandidat...",
+      "Menyinkronkan root database lokal dengan Merkle Root on-chain."
+    ];
+
+    const interval = setInterval(() => {
+      const randomMsg = simulationLogs[Math.floor(Math.random() * simulationLogs.length)];
+      setNodeLogs(prev => {
+        const next = [...prev, `[${new Date().toLocaleTimeString()}] ${randomMsg}`];
+        if (next.length > 30) next.shift(); // Keep only last 30 lines
+        return next;
+      });
+    }, 4500);
+
+    return () => clearInterval(interval);
+  }, [nodeActive, adminRole, isValidatorRole]);
+
+  // Refresh node states for admin monitor
+  useEffect(() => {
+    if (isAdminRole) {
+      const interval = setInterval(() => {
+        setAllNodesState({
+          rektor: localStorage.getItem('voteria_node_rektor_active') !== 'false',
+          dekan_1: localStorage.getItem('voteria_node_dekan_1_active') !== 'false',
+          dekan_2: localStorage.getItem('voteria_node_dekan_2_active') !== 'false',
+          kpum: localStorage.getItem('voteria_node_kpum_active') !== 'false'
+        });
+      }, 2000);
+      return () => clearInterval(interval);
+    }
+  }, [isAdminRole]);
 
   // Reset page when search term changes
   useEffect(() => {
@@ -665,8 +768,8 @@ export default function AdminDashboard() {
                 )}
               </div>
 
-              {/* Control Panel Section (Run / Pause Election) */}
-              {isAdminRole && (
+              {/* Control Panel Section (Run / Pause Election) - ONLY visible for KPUM role */}
+              {isKpumRole && (
                 <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
                   <h3 className="text-base font-bold text-[#080627] uppercase tracking-wider mb-6 border-b border-slate-100 pb-3 flex items-center gap-2.5 font-poppins">
                     <FaCogs className="text-indigo-600 text-sm" /> Manajemen Status Pemilihan
@@ -707,6 +810,116 @@ export default function AdminDashboard() {
                         </>
                       )}
                     </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Validator Node Control Panel (For Validator Roles: rektor, dekan_1, dekan_2, kpum) */}
+              {isValidatorRole && (
+                <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
+                  <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 border-b border-slate-100 pb-5">
+                    <div>
+                      <span className="text-[11px] font-black text-indigo-600 uppercase tracking-wider block">
+                        PBFT Consensus Node Control
+                      </span>
+                      <h3 className="text-xl font-bold text-[#080627] font-poppins mt-1">
+                        {nodeNameMap[adminRole]}
+                      </h3>
+                      <p className="text-xs text-slate-400 font-medium font-sans mt-0.5">
+                        Validator Node status dalam jaringan blockchain Voteria (ChainID: 9988)
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-4">
+                      <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-black text-[9px] uppercase tracking-wider ${
+                        nodeActive 
+                          ? 'bg-green-50 border border-green-200 text-green-600' 
+                          : 'bg-rose-50 border border-rose-200 text-rose-600'
+                      }`}>
+                        <span className={`w-1.5 h-1.5 rounded-full ${nodeActive ? 'bg-green-500 animate-pulse' : 'bg-rose-500'}`}></span>
+                        {nodeActive ? 'Online / Validating' : 'Offline / Suspended'}
+                      </span>
+
+                      <button
+                        onClick={handleToggleNode}
+                        className={`px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-wider text-white shadow-sm transition-all active:scale-95 cursor-pointer ${
+                          nodeActive 
+                            ? 'bg-rose-600 hover:bg-rose-500' 
+                            : 'bg-indigo-600 hover:bg-indigo-500'
+                        }`}
+                      >
+                        {nodeActive ? 'Matikan Server Node' : 'Nyalakan Server Node'}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Terminal Log Console */}
+                  <div className="bg-[#090916] border border-slate-800 p-5 font-mono text-xs text-green-400 h-64 overflow-y-auto rounded-2xl shadow-2xl flex flex-col space-y-1.5 text-left relative">
+                    <div className="flex items-center justify-between border-b border-slate-800 pb-2 mb-2 text-slate-450 uppercase tracking-widest font-sans font-bold text-[10px]">
+                      <span className="flex items-center gap-1.5">
+                        <FaCube className="text-[10px]" /> PBFT Validator Node Terminal CLI
+                      </span>
+                      <span className={`w-2 h-2 rounded-full ${nodeActive ? 'bg-green-500 animate-pulse' : 'bg-rose-500'}`}></span>
+                    </div>
+                    {nodeLogs.map((log, idx) => (
+                      <p key={idx} className="break-all leading-normal">{log}</p>
+                    ))}
+                    {nodeActive && (
+                      <span className="inline-block w-1.5 h-3.5 bg-green-400 animate-pulse"></span>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Validator Network Monitor (For Admin Role) */}
+              {isAdminRole && (
+                <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
+                  <div className="border-b border-slate-100 pb-4">
+                    <h3 className="text-base font-bold text-[#080627] font-poppins uppercase tracking-wider flex items-center gap-2">
+                      <FaLink className="text-indigo-600 text-sm" /> Validator Network Monitor (PBFT)
+                    </h3>
+                    <p className="text-xs text-slate-400 font-medium font-sans mt-0.5">
+                      Memantau keaktifan server node validator konsensus secara real-time
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {[
+                      { key: 'rektor', name: 'Node Rektor', desc: 'Rektorat Main Server' },
+                      { key: 'dekan_1', name: 'Node Dekan 1', desc: 'Fakultas Sosial & Bisnis' },
+                      { key: 'dekan_2', name: 'Node Dekan 2', desc: 'Fakultas Sains & Teknologi' },
+                      { key: 'kpum', name: 'Node KPUM', desc: 'Komisi Pemilihan Umum Mahasiswa' }
+                    ].map((node) => {
+                      const active = allNodesState[node.key];
+                      return (
+                        <div 
+                          key={node.key} 
+                          className={`p-5 rounded-2xl border transition-all duration-300 flex flex-col justify-between h-32 ${
+                            active 
+                              ? 'bg-green-50/20 border-green-200 shadow-sm' 
+                              : 'bg-rose-50/20 border-rose-200'
+                          }`}
+                        >
+                          <div>
+                            <h4 className="font-extrabold text-xs text-[#080627]">{node.name}</h4>
+                            <p className="text-[10px] text-slate-400 mt-0.5 font-medium">{node.desc}</p>
+                          </div>
+                          <div className="flex items-center justify-between mt-4">
+                            <span className="text-[9px] font-mono text-slate-500 uppercase tracking-widest font-bold">
+                              PBFT PEER
+                            </span>
+                            <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full font-black text-[8px] uppercase tracking-wider ${
+                              active 
+                                ? 'bg-green-100 text-green-700' 
+                                : 'bg-rose-100 text-rose-700'
+                            }`}>
+                              <span className={`w-1 h-1 rounded-full ${active ? 'bg-green-500 animate-pulse' : 'bg-rose-500'}`}></span>
+                              {active ? 'ONLINE' : 'OFFLINE'}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}
